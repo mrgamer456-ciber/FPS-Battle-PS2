@@ -1,0 +1,31 @@
+name: Build PS2 ELF
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ps2dev/ps2dev:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build ELF
+        run: make
+
+      - name: Verify output
+        run: test -s fps-battle.elf
+
+      - name: Upload ELF
+        uses: actions/upload-artifact@v4
+        with:
+          name: fps-battle-elf
+          path: fps-battle.elf
+          if-no-files-found: error
